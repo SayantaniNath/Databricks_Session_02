@@ -1,0 +1,10 @@
+*.html
+*.pdf
+*.docx
+*.doc
+*.png
+*.jpg
+*.zip
+finflow/
+interview_prep/logs/
+.DS_Store
