@@ -80,10 +80,10 @@ Structured by interview round order — the thing tested first is built first.
 | Caching: storage levels, lazy gotcha, when to cache vs not, unpersist | ✅ |
 | repartition vs coalesce: shuffle vs no-shuffle, when to use each | ✅ |
 | Salting — conceptual + full walkthrough doc (join salting, groupBy salting, Spark UI detection) | ✅ |
-| Spark UI hands-on + salting from-blank exercises | 🟡 IN PROGRESS |
+| Spark UI hands-on + salting from-blank exercises | ✅ 2026-06-08 |
 | Photon engine: C++ vectorized columnar execution, when it activates vs JVM Spark | ⏳ |
 
-> **⚠️ CHECKPOINT 2026-06-08:** Tomorrow — run `practice_spark_salting.py` → Spark UI walkthrough at localhost:4040 → complete 4 from-blank exercises. After that: Photon → 2C Delta Lake.
+> **Next session: Photon → 2C Delta Lake**
 
 ### 2C: Delta Lake Mechanics ⭐ (most-asked topic in Databricks DE interviews)
 *Est. start: 2026-06-13 | Est. completion: 2026-06-27*
