@@ -67,17 +67,23 @@ Structured by interview round order — the thing tested first is built first.
 | Databricks CE live session: serverless compute, display(), Unity Catalog volume upload | ✅ |
 
 ### 2B: Spark Internals — Deep Dive
-*Est. start: 2026-06-08 | Est. completion: 2026-06-13*
+*Started: 2026-06-07 | Hands-on in progress: 2026-06-08*
 
 | Topic | Status |
 |---|---|
-| Catalyst optimizer: 4 phases (Analysis → Logical Opt → Physical Planning → Code Gen) | ⏳ |
-| Tungsten: off-heap memory management, whole-stage code generation | ⏳ |
-| AQE: partition coalescing, dynamic join strategy switching, skew join optimization (Spark 3.0+) | ⏳ |
-| Shuffle and spill: external sort algorithm, executor memory tuning to reduce spill | ⏳ |
-| spark.sql.shuffle.partitions: why 200 is wrong, how to tune per workload | ⏳ |
-| Diagnosing data skew via Spark UI + salting fix | ⏳ |
+| Catalyst optimizer: 4 phases (Analysis → Logical Opt → Physical Planning → Code Gen) | ✅ |
+| Tungsten: off-heap memory, whole-stage code generation, WSCG `*(1)` in explain output | ✅ |
+| AQE: partition coalescing, dynamic join strategy switching, skew join optimization (Spark 3.0+) | ✅ |
+| Shuffles: map-side write → network → reduce side, stage barrier | ✅ |
+| spark.sql.shuffle.partitions: why 200 is wrong, how to tune | ✅ |
+| Join strategies: BHJ / SMJ / SHJ — when each fires, stage count, speed | ✅ |
+| Caching: storage levels, lazy gotcha, when to cache vs not, unpersist | ✅ |
+| repartition vs coalesce: shuffle vs no-shuffle, when to use each | ✅ |
+| Salting — conceptual + full walkthrough doc (join salting, groupBy salting, Spark UI detection) | ✅ |
+| Spark UI hands-on + salting from-blank exercises | 🟡 IN PROGRESS |
 | Photon engine: C++ vectorized columnar execution, when it activates vs JVM Spark | ⏳ |
+
+> **⚠️ CHECKPOINT 2026-06-08:** Tomorrow — run `practice_spark_salting.py` → Spark UI walkthrough at localhost:4040 → complete 4 from-blank exercises. After that: Photon → 2C Delta Lake.
 
 ### 2C: Delta Lake Mechanics ⭐ (most-asked topic in Databricks DE interviews)
 *Est. start: 2026-06-13 | Est. completion: 2026-06-27*
