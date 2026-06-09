@@ -1,5 +1,5 @@
 # DE Interview Prep — Full Learning Path
-**Sayantani Nath | Updated: 2026-06-08**
+**Sayantani Nath | Updated: 2026-06-09**
 **Goal:** Job-ready for FAANG / Databricks DE roles by Oct 1, 2026
 **Base:** Strong SQL, Python, Snowflake/Redshift production, AWS CCP in progress
 
@@ -67,7 +67,7 @@ Structured by interview round order — the thing tested first is built first.
 | Databricks CE live session: serverless compute, display(), Unity Catalog volume upload | ✅ |
 
 ### 2B: Spark Internals — Deep Dive
-*Started: 2026-06-07 | Hands-on in progress: 2026-06-08*
+*Started: 2026-06-07 | Completed: 2026-06-09*
 
 | Topic | Status |
 |---|---|
@@ -81,9 +81,9 @@ Structured by interview round order — the thing tested first is built first.
 | repartition vs coalesce: shuffle vs no-shuffle, when to use each | ✅ |
 | Salting — conceptual + full walkthrough doc (join salting, groupBy salting, Spark UI detection) | ✅ |
 | Spark UI hands-on + salting from-blank exercises | ✅ 2026-06-08 |
-| Photon engine: C++ vectorized columnar execution, when it activates vs JVM Spark | ⏳ |
+| Photon engine: C++ vectorized columnar execution, when it activates vs JVM Spark | ✅ 2026-06-09 |
 
-> **Next session: Photon → 2C Delta Lake**
+> **2B fully complete. Next: 2C Delta Lake.**
 
 ### 2C: Delta Lake Mechanics ⭐ (most-asked topic in Databricks DE interviews)
 *Est. start: 2026-06-13 | Est. completion: 2026-06-27*
