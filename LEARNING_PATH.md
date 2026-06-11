@@ -1,5 +1,5 @@
 # DE Interview Prep — Full Learning Path
-**Sayantani Nath | Updated: 2026-06-09**
+**Sayantani Nath | Updated: 2026-06-11**
 **Goal:** Job-ready for FAANG / Databricks DE roles by Oct 1, 2026
 **Base:** Strong SQL, Python, Snowflake/Redshift production, AWS CCP in progress
 
@@ -37,7 +37,7 @@ Structured by interview round order — the thing tested first is built first.
 
 | Pattern | ~Problems | Est. Window | Status |
 |---|---|---|---|
-| Arrays & Hashing | Two Sum ✅ + Group Anagrams, Top K Frequent, Contains Duplicate, Valid Anagram, Product Except Self, Encode/Decode, Longest Consecutive (~8 total) | Jun 8 → Jun 30 | 🟡 |
+| Arrays & Hashing | Two Sum ✅ + Group Anagrams ✅ + Top K Frequent, Contains Duplicate, Valid Anagram, Product Except Self, Encode/Decode, Longest Consecutive (~8 total) | Jun 8 → Jun 30 | 🟡 |
 | Two Pointers | Valid Palindrome, Two Sum II, 3Sum, Container With Most Water, Trapping Rain Water (~5) | Jul 1 → Jul 14 | ⏳ |
 | Sliding Window | Best Time to Buy/Sell, Longest Substring Without Repeating, Longest Repeating Char, Permutation in String (~4) | Jul 14 → Jul 28 | ⏳ |
 | Trees BFS/DFS ← Databricks CodeSignal | Level Order Traversal, Max Depth, Same Tree, Invert Tree, Validate BST, Right Side View (~6) | Jul 28 → Aug 11 | ⏳ |
@@ -330,7 +330,7 @@ Structured by interview round order — the thing tested first is built first.
 |---|---|---|
 | Skilljar Modules 1–5 | Modules 1-4 done; Module 5 Networking done 2026-05-19 | ✅ |
 | Skilljar Module 6 | Skipped 2026-05-29 — Maarek covers same content faster | ⏹️ |
-| Maarek Udemy course | Through IAM + Lambda + Athena + Redshift as of 2026-06-07 (~half done) | 🟡 |
+| Maarek Udemy course | Through IAM + Lambda + Athena + Redshift + S3 (hands-on) as of 2026-06-11 (~half done) | 🟡 |
 | Tutorials Dojo Round 1 | Full timed exam, review every wrong answer (~3 hrs) | ⏳ |
 | Patch weak topics | Re-watch Maarek sections exposed by TD | ⏳ |
 | Tutorials Dojo Round 2 | Score 80%+ consistently → book real exam | ⏳ |

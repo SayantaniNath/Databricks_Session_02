@@ -3,6 +3,7 @@
 | Date | Problem | Pattern | Solved from blank? | Notes |
 |---|---|---|---|---|
 | 2026-06-03 | Two Sum | Arrays & Hashing | With hints | Understood hashmap approach; needed help with enumerate, seen[complement] lookup, and indentation |
+| 2026-06-11 | Group Anagrams | Arrays & Hashing | Mostly — got logic right, needed syntax fixes (colon, sorted vs sort) | Understood defaultdict(list), sorted key fingerprint, and append pattern |
 
 ---
 
@@ -64,3 +65,50 @@ It returns the index where that complement was previously stored. `seen = {2: 0}
 
 **Q: Why return a list `[...]` and not a tuple `(...)`?**
 The problem asks for a list. `[0, 1]` is a list, `(0, 1)` is a tuple. Both work in practice but use square brackets to match the expected output type.
+
+---
+
+## Group Anagrams
+*Date: 2026-06-11 | Pattern: Arrays & Hashing*
+
+**Problem:** Given a list of strings, group the anagrams together. Return groups in any order.
+
+```
+Example:
+Input:  ["eat","tea","tan","ate","nat","bat"]
+Output: [["eat","tea","ate"], ["tan","nat"], ["bat"]]
+```
+
+**Solution (defaultdict + sorted key — O(n·k log k) time, O(n·k) space):**
+
+```python
+from collections import defaultdict
+
+def group_anagrams(strs):
+    groups = defaultdict(list)      # dict that auto-creates [] for any new key
+    for word in strs:               # loop through each word
+        key = "".join(sorted(word)) # sort letters → anagram fingerprint: "eat" → "aet"
+        groups[key].append(word)    # add word to its bucket
+    return list(groups.values())    # return all buckets as list of lists
+```
+
+**How it works:**
+- All anagrams produce the same sorted string ("eat", "tea", "ate" all → "aet")
+- Use that sorted string as the dict key → all anagrams land in the same bucket
+- `defaultdict(list)` auto-creates `[]` on first access so `.append()` never crashes
+
+---
+
+## Q&A — 2026-06-11
+
+**Q: Why does a plain dict crash but defaultdict works?**
+`{}["newkey"].append("x")` → KeyError because "newkey" doesn't exist yet. `defaultdict(list)["newkey"].append("x")` works because it auto-creates `[]` at "newkey" the first time it's accessed.
+
+**Q: What does `sorted(word)` return?**
+A list of characters sorted alphabetically. `sorted("eat")` → `['a', 'e', 't']`. Not a string — that's why you need `"".join(...)` to turn it back.
+
+**Q: What does `"".join(sorted(word))` do?**
+`"".join(...)` joins a list of strings into one string using `""` (nothing) as separator. `['a','e','t']` → `"aet"`. If you used `",".join(...)` you'd get `"a,e,t"` — also a valid key but `""` is cleaner.
+
+**Q: How is `groups.values()` different from `groups`?**
+`groups` is the full dict e.g. `{"aet": ["eat","tea"], "abt": ["bat"]}`. `groups.values()` gives just the values (the buckets): `[["eat","tea"], ["bat"]]`. Wrap in `list()` to return as a plain list.
