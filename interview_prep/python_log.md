@@ -182,5 +182,14 @@ def top_k_frequent(nums, k):
 **Q: In `for num, _ in Counter(nums).most_common(k)` — what is the `_`?**
 `.most_common(k)` returns (number, count) pairs like `[(1, 3), (2, 2)]`. The loop unpacks each pair into two variables. `_` is the Python convention for "I'm required to unpack this but I don't use it" — here we keep the number and throw away the count. `for num, count in ...` works identically; `_` just signals intent. This makes V2 the easiest Top K version: `return [num for num, _ in Counter(nums).most_common(k)]`.
 
+**Q: What does `return sorted(counts, key=lambda x: counts[x], reverse=True)[:k]` do?**
+Four pieces, with `counts = {1: 3, 2: 2, 3: 1}`, k=2:
+1. `sorted(counts, ...)` — sorting a dict iterates its **keys** → input is `[1, 2, 3]`
+2. `key=lambda x: counts[x]` — the measuring stick: rank each key by its count, not by the key itself (1 is ranked by 3, 2 by 2, 3 by 1)
+3. `reverse=True` — biggest count first → `[1, 2, 3]`
+4. `[:k]` — first k items → `[1, 2]`
+
+One sentence: "take the dict's keys, order them by their counts biggest-first, return the first k." Gotcha: the lambda only controls the *ordering* — the output is still the keys, never the counts.
+
 **Q: In Two Sum, why does `seen[num] = i` make the number the key instead of the value?**
 In Python, `d[x] = y` always means *x is the key, y is the value* — whatever is inside the square brackets is the key. We deliberately put the **number** in the brackets because of how we need to look things up later: dict lookups go key → value, and the question we ask on every loop iteration is "have I already seen this *number*, and if so at what *index*?" That's `complement in seen` (search by number) followed by `seen[complement]` (retrieve its index). If we stored it the other way around (`seen[i] = num`, index as key), we couldn't check for the complement without scanning every value — back to O(n²). Rule of thumb: **the thing you search by is the key; the thing you want back is the value.**
