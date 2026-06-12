@@ -66,3 +66,30 @@ assert sorted([sorted(g) for g in result]) == sorted([sorted(g) for g in [["eat"
 assert group_anagrams([""]) == [[""]]
 assert group_anagrams(["a"]) == [["a"]]
 print("Group Anagrams: all tests passed")
+
+
+# ============================================================
+# 3. Top K Frequent Elements
+# ============================================================
+# Problem: Given nums and k, return the k most frequent elements. Any order.
+# Example: nums = [1,1,1,2,2,3], k = 2 → [1, 2]
+# Key insight: count with a dict, then sort the keys by their count (descending), take first k
+# Time: O(n log n) | Space: O(n)
+
+def top_k_frequent(nums, k):
+    counts = defaultdict(int)              # dict that auto-creates 0 for any new key
+    for num in nums:                       # count occurrences of each number
+        counts[num] += 1
+    ordered = sorted(counts, key=lambda x: counts[x], reverse=True)  # keys sorted by count, biggest first
+    return ordered[:k]                     # first k keys = k most frequent
+
+
+# One-liner alternative using Counter:
+#   from collections import Counter
+#   return [num for num, count in Counter(nums).most_common(k)]
+
+
+assert sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)) == [1, 2]
+assert top_k_frequent([1], 1) == [1]
+assert sorted(top_k_frequent([4, 4, 7, 7, 9], 2)) == [4, 7]
+print("Top K Frequent: all tests passed")

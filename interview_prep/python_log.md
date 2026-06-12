@@ -4,6 +4,7 @@
 |---|---|---|---|---|
 | 2026-06-03 | Two Sum | Arrays & Hashing | With hints | Understood hashmap approach; needed help with enumerate, seen[complement] lookup, and indentation |
 | 2026-06-11 | Group Anagrams | Arrays & Hashing | Mostly — got logic right, needed syntax fixes (colon, sorted vs sort) | Understood defaultdict(list), sorted key fingerprint, and append pattern |
+| 2026-06-11 | Top K Frequent Elements | Arrays & Hashing | Partial — got count loop + "find max" intuition, needed help extending max→top-k and the sort-by-value syntax | Learned defaultdict(int) for counting, sorted(key=lambda), and Counter.most_common(k) |
 
 ---
 
@@ -112,3 +113,49 @@ A list of characters sorted alphabetically. `sorted("eat")` → `['a', 'e', 't']
 
 **Q: How is `groups.values()` different from `groups`?**
 `groups` is the full dict e.g. `{"aet": ["eat","tea"], "abt": ["bat"]}`. `groups.values()` gives just the values (the buckets): `[["eat","tea"], ["bat"]]`. Wrap in `list()` to return as a plain list.
+
+---
+
+## Top K Frequent Elements
+*Date: 2026-06-11 | Pattern: Arrays & Hashing*
+
+**Problem:** Given a list of integers `nums` and an integer `k`, return the `k` most frequent elements. Any order.
+
+```
+Example:
+nums = [1, 1, 1, 2, 2, 3], k = 2
+Output: [1, 2]   # 1 appears 3 times, 2 appears twice
+```
+
+**Solution (count + sort by value — O(n log n) time, O(n) space):**
+
+```python
+from collections import defaultdict
+
+def top_k_frequent(nums, k):
+    counts = defaultdict(int)              # auto-creates 0 for any new key
+    for num in nums:
+        counts[num] += 1                   # count occurrences
+    ordered = sorted(counts, key=lambda x: counts[x], reverse=True)
+    return ordered[:k]                     # first k = most frequent
+```
+
+**How it works:**
+- `defaultdict(int)` starts every new key at 0, so `counts[num] += 1` never crashes
+- `sorted(counts, ...)` iterates the dict's **keys**; `key=lambda x: counts[x]` says "rank each key by its count"
+- `reverse=True` puts the biggest counts first; slice `[:k]` takes the top k
+
+**Shortcut to mention in interviews:**
+
+```python
+from collections import Counter
+def top_k_frequent(nums, k):
+    return [num for num, count in Counter(nums).most_common(k)]
+```
+
+---
+
+## Q&A — 2026-06-12
+
+**Q: In Two Sum, why does `seen[num] = i` make the number the key instead of the value?**
+In Python, `d[x] = y` always means *x is the key, y is the value* — whatever is inside the square brackets is the key. We deliberately put the **number** in the brackets because of how we need to look things up later: dict lookups go key → value, and the question we ask on every loop iteration is "have I already seen this *number*, and if so at what *index*?" That's `complement in seen` (search by number) followed by `seen[complement]` (retrieve its index). If we stored it the other way around (`seen[i] = num`, index as key), we couldn't check for the complement without scanning every value — back to O(n²). Rule of thumb: **the thing you search by is the key; the thing you want back is the value.**
