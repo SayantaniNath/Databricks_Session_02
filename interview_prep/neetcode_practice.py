@@ -69,11 +69,13 @@ print("Group Anagrams: all tests passed")
 
 
 # ============================================================
-# 3. Top K Frequent Elements
+# 3. Top K Frequent Elements — 3 versions
 # ============================================================
 # Problem: Given nums and k, return the k most frequent elements. Any order.
 # Example: nums = [1,1,1,2,2,3], k = 2 → [1, 2]
-# Key insight: count with a dict, then sort the keys by their count (descending), take first k
+# Key insight: count with a dict, then pick the k keys with the biggest counts
+
+# --- Version 1: count + sort by value (write this one from blank) ---
 # Time: O(n log n) | Space: O(n)
 
 def top_k_frequent(nums, k):
@@ -84,12 +86,36 @@ def top_k_frequent(nums, k):
     return ordered[:k]                     # first k keys = k most frequent
 
 
-# One-liner alternative using Counter:
-#   from collections import Counter
-#   return [num for num, count in Counter(nums).most_common(k)]
+# --- Version 2: Counter shortcut (mention in interviews, then offer V1/V3) ---
+# Time: O(n log n) | Space: O(n)
+
+from collections import Counter
+
+def top_k_frequent_counter(nums, k):
+    return [num for num, count in Counter(nums).most_common(k)]
 
 
-assert sorted(top_k_frequent([1, 1, 1, 2, 2, 3], 2)) == [1, 2]
-assert top_k_frequent([1], 1) == [1]
-assert sorted(top_k_frequent([4, 4, 7, 7, 9], 2)) == [4, 7]
-print("Top K Frequent: all tests passed")
+# --- Version 3: bucket sort — the optimal answer (no sorting at all) ---
+# Time: O(n) | Space: O(n)
+# Trick: a number can appear at most len(nums) times, so make one bucket per
+# possible count. buckets[3] holds every number that appeared exactly 3 times.
+# Walk buckets from highest count down, collecting numbers until you have k.
+
+def top_k_frequent_bucket(nums, k):
+    counts = Counter(nums)
+    buckets = [[] for _ in range(len(nums) + 1)]   # index = count, value = numbers with that count
+    for num, count in counts.items():
+        buckets[count].append(num)
+    result = []
+    for count in range(len(buckets) - 1, 0, -1):   # highest count → lowest
+        for num in buckets[count]:
+            result.append(num)
+            if len(result) == k:
+                return result
+
+
+for fn in (top_k_frequent, top_k_frequent_counter, top_k_frequent_bucket):
+    assert sorted(fn([1, 1, 1, 2, 2, 3], 2)) == [1, 2]
+    assert fn([1], 1) == [1]
+    assert sorted(fn([4, 4, 7, 7, 9], 2)) == [4, 7]
+print("Top K Frequent: all tests passed (3 versions)")

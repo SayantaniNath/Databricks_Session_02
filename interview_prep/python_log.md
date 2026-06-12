@@ -127,7 +127,7 @@ nums = [1, 1, 1, 2, 2, 3], k = 2
 Output: [1, 2]   # 1 appears 3 times, 2 appears twice
 ```
 
-**Solution (count + sort by value — O(n log n) time, O(n) space):**
+**Version 1 — count + sort by value (write this from blank — O(n log n) time, O(n) space):**
 
 ```python
 from collections import defaultdict
@@ -140,18 +140,40 @@ def top_k_frequent(nums, k):
     return ordered[:k]                     # first k = most frequent
 ```
 
-**How it works:**
 - `defaultdict(int)` starts every new key at 0, so `counts[num] += 1` never crashes
 - `sorted(counts, ...)` iterates the dict's **keys**; `key=lambda x: counts[x]` says "rank each key by its count"
 - `reverse=True` puts the biggest counts first; slice `[:k]` takes the top k
 
-**Shortcut to mention in interviews:**
+**Version 2 — Counter shortcut (mention in interviews, then offer V1/V3):**
 
 ```python
 from collections import Counter
+
 def top_k_frequent(nums, k):
     return [num for num, count in Counter(nums).most_common(k)]
 ```
+
+**Version 3 — bucket sort, the optimal answer (O(n) time, O(n) space — no sorting):**
+
+```python
+from collections import Counter
+
+def top_k_frequent(nums, k):
+    counts = Counter(nums)
+    buckets = [[] for _ in range(len(nums) + 1)]   # index = count
+    for num, count in counts.items():
+        buckets[count].append(num)                 # numbers grouped by how often they appear
+    result = []
+    for count in range(len(buckets) - 1, 0, -1):   # walk highest count → lowest
+        for num in buckets[count]:
+            result.append(num)
+            if len(result) == k:
+                return result
+```
+
+- A number can appear at most `len(nums)` times → one bucket per possible count, so no sort needed
+- `buckets[3]` holds every number that appeared exactly 3 times
+- Walking buckets from the highest index down gives most-frequent first; stop at k
 
 ---
 
