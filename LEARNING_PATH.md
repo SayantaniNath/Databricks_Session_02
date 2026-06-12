@@ -86,22 +86,23 @@ Structured by interview round order — the thing tested first is built first.
 > **2B fully complete. Next: 2C Delta Lake.**
 
 ### 2C: Delta Lake Mechanics ⭐ (most-asked topic in Databricks DE interviews)
-*Est. start: 2026-06-13 | Est. completion: 2026-06-27*
+*Actual start: 2026-06-12 | Est. completion: 2026-06-27*
 
 | Topic | Status |
 |---|---|
-| _delta_log structure: JSON commit files + Parquet checkpoints at every 10th commit | ⏳ |
-| ACID via optimistic concurrency control (writer conflict resolution) | ⏳ |
-| Time travel: how Delta reconstructs snapshot at version N using the log | ⏳ |
-| Schema enforcement vs evolution (mergeSchema option), risks of each | ⏳ |
-| OPTIMIZE + Z-ORDER: when it helps, when it doesn't, column selection strategy | ⏳ |
-| VACUUM: default 7-day retention, time travel impact, why to never drop below retention period | ⏳ |
-| MERGE INTO: isolation level, under-the-hood mechanics, upsert patterns | ⏳ |
-| Change Data Feed (CDF): pre-image/post-image for UPDATE, how to enable and consume | ⏳ |
-| Small files problem: API call math, how OPTIMIZE consolidates | ⏳ |
-| Dynamic file pruning + data skipping (min/max column statistics) | ⏳ |
-| Delta Sharing: what problem it solves, how it differs from copying data | ⏳ |
-| Delta vs Iceberg vs Hudi: transaction log architecture differences, ecosystem split (Databricks/Apple/Uber) | ⏳ |
+| _delta_log structure: JSON commit files + Parquet checkpoints at every 10th commit | ✅ 2026-06-12 |
+| ACID via optimistic concurrency control (writer conflict resolution) | ✅ 2026-06-12 |
+| Time travel: how Delta reconstructs snapshot at version N using the log | ✅ 2026-06-12 (incl. RESTORE) |
+| Schema enforcement vs evolution (mergeSchema option), risks of each | ✅ 2026-06-12 |
+| OPTIMIZE + Z-ORDER: when it helps, when it doesn't, column selection strategy | ✅ 2026-06-12 (incl. liquid clustering) |
+| VACUUM: default 7-day retention, time travel impact, why to never drop below retention period | ✅ 2026-06-12 |
+| MERGE INTO: isolation level, under-the-hood mechanics, upsert patterns | ✅ 2026-06-12 |
+| Change Data Feed (CDF): pre-image/post-image for UPDATE, how to enable and consume | ✅ 2026-06-12 |
+| Small files problem: API call math, how OPTIMIZE consolidates | ✅ 2026-06-12 |
+| Dynamic file pruning + data skipping (min/max column statistics) | ✅ 2026-06-12 |
+| Delta Sharing: what problem it solves, how it differs from copying data | ⏳ next session (written up in walkthrough doc §27) |
+| Delta vs Iceberg vs Hudi: transaction log architecture differences, ecosystem split (Databricks/Apple/Uber) | ⏳ next session (written up in walkthrough doc §27) |
+| Hands-on lab: build Delta table in CE, inspect _delta_log, watch checkpoint at v10 (walkthrough doc §23) | ⏳ Monday 2026-06-15 |
 
 ### 2D: Structured Streaming ⭐
 *Est. start: 2026-06-27 | Est. completion: 2026-07-07*
