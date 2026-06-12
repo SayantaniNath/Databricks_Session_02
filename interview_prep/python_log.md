@@ -182,6 +182,9 @@ def top_k_frequent(nums, k):
 **Q: In `for num, _ in Counter(nums).most_common(k)` — what is the `_`?**
 `.most_common(k)` returns (number, count) pairs like `[(1, 3), (2, 2)]`. The loop unpacks each pair into two variables. `_` is the Python convention for "I'm required to unpack this but I don't use it" — here we keep the number and throw away the count. `for num, count in ...` works identically; `_` just signals intent. This makes V2 the easiest Top K version: `return [num for num, _ in Counter(nums).most_common(k)]`.
 
+**Q: What does `counts[num] += 1` store?**
+The running count of each number — number as key, count-so-far as value. It's shorthand for `counts[num] = counts[num] + 1`: read the current count, add 1, store it back. For `[1, 1, 1, 2, 2, 3]` the dict grows `{1:1}` → `{1:2}` → `{1:3}` → `{1:3, 2:1}` → `{1:3, 2:2}` → `{1:3, 2:2, 3:1}`. `defaultdict(int)` makes the first occurrence work by auto-creating the key at 0 — a plain `{}` would raise KeyError. Same pattern as Two Sum's `seen[num] = i`: number is the key; the value is whatever you want back later (count here, index there).
+
 **Q: What does `return sorted(counts, key=lambda x: counts[x], reverse=True)[:k]` do?**
 Four pieces, with `counts = {1: 3, 2: 2, 3: 1}`, k=2:
 1. `sorted(counts, ...)` — sorting a dict iterates its **keys** → input is `[1, 2, 3]`
