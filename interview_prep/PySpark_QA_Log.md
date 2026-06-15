@@ -202,3 +202,89 @@ Typical use| DW pipelines, Delta Lake, feature engineering| Fraud detection, rea
 **Presto/Trino** — data already exists in S3/Delta/Iceberg/Postgres and you want fast SQL without moving it. Superpower: federation — one query across multiple sources.
 
 Interview one-liner: PySpark = batch/streaming ETL engine. Flink = true real-time streaming engine. Presto/Trino = fast SQL query engine across existing data stores. They solve different problems and often coexist in the same stack.
+
+---
+
+## Delta Lake — OCC (Optimistic Concurrency Control)
+
+**Q: Two writers start at the same time. Writer A commits first. Does Writer B retry automatically or throw ConcurrentModificationException?**
+
+**Delta throws — it does NOT retry automatically.**
+
+Delta uses optimistic concurrency: writers don't lock the table upfront. When B tries to commit, Delta checks: do B's read/write files overlap with what A just modified?
+
+| Scenario | Result |
+|---|---|
+| B's files overlap with A's changed files | Delta throws `ConcurrentModificationException` — your code must retry |
+| B's files don't overlap (e.g. different partitions) | B's commit succeeds — both writers coexist |
+
+**Key point:** Retry is your application's responsibility. Delta only detects and reports the conflict — it does not auto-retry.
+
+**Common wrong answer:** "B retries automatically." Delta throws; you retry.
+
+---
+
+## Delta Lake — VACUUM Retention Horizon
+
+**Q: A table has commits 0–25. You run VACUUM with default settings. What is the earliest version Delta keeps data files for?**
+
+**VACUUM is time-based, not commit-count-based.**
+
+It removes Parquet data files no longer referenced by any version within the last 7 days (default). Commit numbers don't matter — only timestamps do.
+
+- If all 26 commits happened in the last 3 days → VACUUM removes nothing.
+- If commits 0–10 happened 2 weeks ago → those versions' Parquet files may be removed.
+
+**What VACUUM touches:** Parquet data files only. The `_delta_log` is untouched. Time travel uses the log to reconstruct versions — but if the Parquet files have been vacuumed, the read will fail.
+
+**Common wrong answer:** "Earliest version is commit 20" — you can't derive a version number from a retention window without knowing timestamps.
+
+---
+
+## Delta Lake — VACUUM Commands (all variants)
+
+**Q: What are the VACUUM command variants in Delta Lake?**
+
+```sql
+-- Default (7-day retention)
+VACUUM my_table
+
+-- Custom retention
+VACUUM my_table RETAIN 336 HOURS       -- 14 days
+VACUUM my_table RETAIN 168 HOURS       -- 7 days (explicit)
+
+-- Dry run — shows what WOULD be deleted, deletes nothing
+VACUUM my_table DRY RUN
+
+-- Go below 7 days (disables safety check — breaks time travel)
+SET spark.databricks.delta.retentionDurationCheck.enabled = false;
+VACUUM my_table RETAIN 0 HOURS;
+```
+
+**Rule:** Always run `DRY RUN` first on production tables. Never go below 7 days unless you explicitly don't need time travel.
+
+---
+
+## Delta Lake — MERGE Write Amplification
+
+**Q: You MERGE 1,000 rows into a Delta table with 500 Parquet files. Only 20 files contain matching rows. How many files are rewritten? Why is this a problem at scale?**
+
+**All 20 files are rewritten in full — even if each file had only 1 matching row.**
+
+Parquet files are immutable. Delta cannot update a single row in-place. For every file that contains at least one match, Delta must:
+1. Read the entire file
+2. Apply the change to the matching rows
+3. Write a brand new Parquet file
+4. Mark the old file as deleted in `_delta_log`
+
+The other 480 files are untouched.
+
+**The scale problem:** If those 20 files are 1 GB each → 20 GB of I/O for a 1,000-row change.
+
+| Mitigation | Why it helps |
+|---|---|
+| Partition on merge key | Delta prunes to relevant partitions — far fewer files touched |
+| Z-ORDER on merge key | Co-locates matching rows into fewer files |
+| OPTIMIZE before large MERGE | Compaction → fewer files → less file-open overhead |
+
+**Interview one-liner:** MERGE rewrites every touched file in full because Parquet is immutable. Partition + Z-ORDER on your merge key to minimize how many files get touched.
