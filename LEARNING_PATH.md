@@ -1,5 +1,5 @@
 # DE Interview Prep — Full Learning Path
-**Sayantani Nath | Updated: 2026-06-11**
+**Sayantani Nath | Updated: 2026-06-15**
 **Goal:** Job-ready for FAANG / Databricks DE roles by Oct 1, 2026
 **Base:** Strong SQL, Python, Snowflake/Redshift production, AWS CCP in progress
 
@@ -281,7 +281,7 @@ Structured by interview round order — the thing tested first is built first.
 | Ch 1 — Reliable, Scalable, Maintainable | ✅ | by 2026-05-29 |
 | Ch 2 — Data Models and Query Languages | ✅ | by 2026-05-29 |
 | Ch 3 — Storage and Retrieval | ✅ | 2026-06-01 |
-| Ch 4 — Encoding and Evolution | ⏳ | Due Jun 13–14 |
+| Ch 4 — Encoding and Evolution | ⏳ | Due Jun 20–21 (catch-up weekend) |
 | Ch 5 — Replication | ⏳ | Due Jun 21–22 |
 | Ch 6 — Partitioning | ⏳ | Due Jun 28–29 |
 | Ch 7 — Transactions | ⏳ | Due Jul 5–6 |
@@ -325,14 +325,14 @@ Structured by interview round order — the thing tested first is built first.
 ## PILLAR 6: Certifications
 
 ### AWS Cloud Practitioner (CLF-C02)
-*Slot: Tue/Thu 1 hr | Target completion: Jul 18, 2026*
+*Slot: Tue/Thu 1 hr | Target completion: early-mid Jul 2026 (ahead of schedule — Maarek finishing Jun 19)*
 
 | Phase | Detail | Status |
 |---|---|---|
 | Skilljar Modules 1–5 | Modules 1-4 done; Module 5 Networking done 2026-05-19 | ✅ |
 | Skilljar Module 6 | Skipped 2026-05-29 — Maarek covers same content faster | ⏹️ |
-| Maarek Udemy course | Through IAM + Lambda + Athena + Redshift + S3 (hands-on) as of 2026-06-11 (~half done) | 🟡 |
-| Tutorials Dojo Round 1 | Full timed exam, review every wrong answer (~3 hrs) | ⏳ |
+| Maarek Udemy course | Intensive week Jun 15-19 (1 hr Mon + 3 hrs/day Tue-Fri) — completing this week | 🟡 |
+| Tutorials Dojo Round 1 | Full timed exam, review every wrong answer (~3 hrs) — starts Jun 22 | ⏳ |
 | Patch weak topics | Re-watch Maarek sections exposed by TD | ⏳ |
 | Tutorials Dojo Round 2 | Score 80%+ consistently → book real exam | ⏳ |
 
