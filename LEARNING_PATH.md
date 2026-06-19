@@ -1,5 +1,5 @@
 # DE Interview Prep — Full Learning Path
-**Sayantani Nath | Updated: 2026-06-15**
+**Sayantani Nath | Updated: 2026-06-19**
 **Goal:** Job-ready for FAANG / Databricks DE roles by Oct 1, 2026
 **Base:** Strong SQL, Python, Snowflake/Redshift production, AWS CCP in progress
 
@@ -247,6 +247,9 @@ Structured by interview round order — the thing tested first is built first.
 | RBAC: roles, users, privilege model | ⏳ |
 | Result cache + query pruning: how Snowflake avoids recompute | ⏳ |
 | Snowflake vs Databricks: when each wins (governance-heavy warehouse vs open lakehouse) | ⏳ |
+| **Mini-project:** Snowpipe auto-ingest from S3 → staging table (hands-on, ~1 hr) | ⏳ |
+| **Mini-project:** Streams + Tasks incremental processing (staging → curated, ~1 hr) | ⏳ |
+| **Mini-project:** BI views + virtual warehouse sizing + query profile exercise (~1 hr) | ⏳ |
 
 ### 4D: dbt Crash Course
 *Slot: Tue/Thu 1 hr | Est. start: 2026-09-15 | Est. completion: 2026-09-30*
@@ -354,11 +357,96 @@ Structured by interview round order — the thing tested first is built first.
 | Project | Stack | Est. Build Window | Status |
 |---|---|---|---|
 | **FinFlow — batch pipeline** | PySpark + Pandas + Delta Lake | Ongoing | 🟡 |
+| **AWS FinFlow — Cloud-Native Lakehouse** ⭐ NEW | S3 + Glue (Crawler + ETL) + EMR + Redshift + Lambda + Kinesis + MWAA + Apache Iceberg | Phase 1: Jul 19–28 · Phase 2: Aug 1–11 · Phase 3: Aug 11–18 | ⏳ |
 | **Fraud Detection Pipeline** ⭐ | Kafka → Structured Streaming → IsolationForest → alert Kafka topic → Delta Lake → Airflow | Aug 1–11 | ⏳ |
 | **CDC Pipeline** | Debezium → Kafka → Delta (CDF enabled) + SCD Type 2 MERGE INTO | Aug 11–18 | ⏳ |
 | **Databricks Lakehouse + AI Monitor** ⭐ | Bronze/Silver/Gold + DLT + Unity Catalog + Airflow + Claude API anomaly detection | Aug 18–29 | ⏳ |
 
 **Portfolio polish window:** Sep 15 → Oct 1 — GitHub READMEs, architecture diagrams, measurable outcomes, deploy instructions.
+
+---
+
+### AWS FinFlow — Cloud-Native Lakehouse: Architecture Spec
+*Same PaySim payments dataset as FinFlow. Same transformations, new AWS execution layer. Covers every service in the "AWS Data Platform Architecture" JD template.*
+
+**Services demonstrated:** S3, Glue (Crawler + ETL + Data Catalog), EMR Serverless, Redshift Serverless, Lambda, Kinesis Data Streams, Kinesis Firehose, MWAA, Apache Iceberg, CloudWatch
+
+#### Data Flow
+
+**Batch path:**
+```
+S3 (raw/bronze prefix)
+  → Glue Crawler → Data Catalog (schema + partition registration)
+  → Glue ETL job (PySpark, Glue 3.0): clean nulls, standardize categories, partition by payment_date
+  → S3 silver (Apache Iceberg format via Glue + Iceberg connector)  ← covers Hudi/Iceberg/Delta tri-fecta
+  → Redshift COPY from S3 → fact_transactions, dim_customer, dim_merchant (gold layer)
+  → EMR Serverless job: monthly_merchant_risk_score (heavy aggregation, runs once, terminates)
+```
+
+**Streaming path:**
+```
+Python producer (replays PaySim CSV at ~1K events/sec as JSON)
+  → Kinesis Data Streams
+  → Lambda (validate schema, add fraud_flag via threshold rule, enrich with category)
+  → Kinesis Firehose → S3 (streaming prefix, hourly partitions)
+  → Glue ETL incremental job picks up new S3 partitions
+```
+
+**Orchestration:**
+```
+MWAA DAG:
+  S3KeySensor (new raw file) → trigger Glue Crawler → GlueJobOperator (ETL)
+  → RedshiftDataOperator (COPY) → data quality check (row count, null %) → CloudWatch alarm on SLA breach
+```
+*Develop + test on local Airflow (same DAG). Deploy to MWAA for 1–2 demo sessions, then delete environment to avoid $0.49/hr cost.*
+
+#### Build Phases
+
+**Phase 1 — Batch (Jul 19–28, fresh after AWS exam, Fri slot + weekend sessions):**
+- S3 bucket: raw/, silver/, gold/ prefixes + lifecycle rules
+- Glue Crawler on raw S3 → Data Catalog table
+- Glue ETL job: clean + enrich + write Iceberg silver layer
+- Redshift Serverless: COPY from S3, build dim/fact model (reuse FinFlow SQL)
+- EMR Serverless: monthly merchant risk aggregation (1 job, terminate after)
+
+**Phase 2 — Orchestration (Aug 1–11, parallel to Airflow 4B):**
+- Build DAG locally first (Airflow), then deploy same DAG to MWAA
+- Add CloudWatch alarm: if Redshift row count < expected, fire SNS alert
+- Tear down MWAA environment after demo to stop hourly billing
+
+**Phase 3 — Streaming (Aug 11–18, parallel to CDC Pipeline):**
+- Python Kinesis producer: stream PaySim rows as JSON events
+- Lambda handler: schema validation + fraud_flag enrichment + Firehose delivery
+- End-to-end test: event → S3 within 60 seconds, Glue picks up within next hourly window
+
+#### Cost Controls
+| Service | Cost estimate | Action |
+|---|---|---|
+| S3 | Free (<5 GB) | — |
+| Glue ETL (2 DPU, ~5 min/run) | ~$0.07/run | Run sparingly during dev |
+| EMR Serverless (1 job) | ~$0.10–0.20 | Terminate immediately after job |
+| Redshift Serverless | ~$0.36/RPU-hr | Auto-pause enabled; query only during active work |
+| Lambda + Kinesis | Free tier for test volumes | — |
+| MWAA | $0.49/hr × ~72 hrs | Spin up Phase 2 week only, delete after (~$35 total) |
+| **Total estimate** | **~$50–70** | Acceptable for full AWS DE portfolio project |
+
+#### Interview story
+*"Re-architected FinFlow on AWS: S3 lakehouse with Apache Iceberg tables (Glue ETL + EMR Spark for heavy aggregation), real-time enrichment via Kinesis + Lambda, Redshift gold layer, MWAA-orchestrated DAG with CloudWatch SLA alerting. Full batch + streaming on AWS; same PaySim payments dataset as the PySpark version."*
+
+---
+
+### Snowflake Mini-Project (embedded in 4C slot, Sep 1–14)
+*Same PaySim data. 3 sessions (Tue/Thu), no schedule extension needed.*
+
+| Topic | Status |
+|---|---|
+| Snowpipe: auto-ingest from S3 event notification → Snowflake staging table | ⏳ |
+| Streams + Tasks: CDC-style incremental processing (staging → curated table) | ⏳ |
+| BI layer: analytical views + virtual warehouse sizing + query profile exercise | ⏳ |
+
+*Interview story: "Set up Snowpipe to auto-ingest from S3, used Streams + Tasks for CDC-style incremental processing — direct comparison to Kinesis+Lambda (push) vs Snowpipe (poll/event) patterns."*
+
+---
 
 **Resume note:** FinFlow is framed as a *fintech transactions pipeline* (PaySim synthetic payments data, NOT crypto). Repoint code from crypto JSONL → PaySim before any resume submission that names FinFlow as a payments/transactions project.
 
@@ -385,9 +473,9 @@ Structured by interview round order — the thing tested first is built first.
 | Window | Primary Focus | Slot |
 |---|---|---|
 | Jun 8 → Jul 18 | Spark Internals (2B) → Delta Lake (2C) → Streaming (2D) → DLT (2E) → Unity Catalog (2F) → Auto Loader (2G) → MLflow (2H) → Data Modeling (2J) + Tom Bailey Snowflake (2I) + AWS CCP | Mon/Wed/Fri + Tue/Thu |
-| Jul 18 → Aug 1 | Kafka (4A) + Databricks DEA cert starts | Mon/Wed/Fri |
-| Aug 1 → Aug 11 | Airflow (4B) + wire Fraud Detection DAG | Mon/Wed/Fri + Tue/Thu |
-| Aug 11 → Aug 18 | Concurrency round prep (Pillar 3) + CDC Pipeline build | Mon–Fri intensive |
+| Jul 18 → Aug 1 | Kafka (4A) + Databricks DEA cert starts + **AWS FinFlow Phase 1** (S3+Glue+EMR+Redshift+Iceberg, Fri+weekend slots) | Mon/Wed/Fri |
+| Aug 1 → Aug 11 | Airflow (4B) + Fraud Detection DAG + **AWS FinFlow Phase 2** (MWAA orchestration, parallel to Airflow) | Mon/Wed/Fri + Tue/Thu |
+| Aug 11 → Aug 18 | Concurrency prep (P3) + CDC Pipeline + **AWS FinFlow Phase 3** (Kinesis+Lambda streaming) | Mon–Fri intensive |
 | Aug 18 → Aug 29 | Databricks Lakehouse + AI Monitor capstone build + DEA cert push | Mon/Wed/Fri + Tue/Thu |
 | Aug 29 → Sep 15 | SD out-loud mocks Phase C (2/week) + Behavioral stories | Flexible |
 | Sep 1 → Sep 14 | Snowflake crash course (4C) — runs Tue/Thu parallel to SD mocks | Tue/Thu |
