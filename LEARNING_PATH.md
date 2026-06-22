@@ -358,7 +358,7 @@ Structured by interview round order — the thing tested first is built first.
 
 | Project | Stack | Est. Build Window | Status |
 |---|---|---|---|
-| **FinFlow — batch pipeline** | PySpark + Pandas + Delta Lake | Ongoing | 🟡 |
+| **FinFlow — learning sandbox** | PySpark + Pandas exercises (crypto JSONL data); not a portfolio project — skills it covers are superseded by ClinicalFlow + Databricks capstone | — | ⏹️ |
 | **AWS ClinicalFlow — Healthcare Data Lakehouse** ⭐ NEW | Synthea EHR (10yr, 100K patients) + S3 + Glue + EMR + Redshift + Lambda + Kinesis + MWAA + Iceberg + KMS + HIPAA/GDPR compliance layer | Phase 1: Jun 23–Jul 4 · Phase 2: Aug 1–11 · Phase 3: Aug 11–18 | ⏳ |
 | **Fraud Detection Pipeline** ⭐ | Kafka → Structured Streaming → IsolationForest → alert Kafka topic → Delta Lake → Airflow | Aug 1–11 | ⏳ |
 | **CDC Pipeline** | Debezium → Kafka → Delta (CDF enabled) + SCD Type 2 MERGE INTO | Aug 11–18 | ⏳ |
@@ -485,7 +485,7 @@ MWAA DAG:
 
 ---
 
-**Resume note:** FinFlow is framed as a *fintech transactions pipeline* (PaySim synthetic payments data, NOT crypto). Repoint code from crypto JSONL → PaySim before any resume submission that names FinFlow as a payments/transactions project.
+**FinFlow note (Jun 2026):** Reclassified as a learning sandbox. Contains PySpark/Pandas exercises and skeleton ingestion code on crypto JSONL data — not a portfolio project. All skills it was intended to demonstrate are covered by AWS ClinicalFlow and the Databricks Lakehouse capstone. Do NOT list FinFlow on any resume variant.
 
 ---
 
