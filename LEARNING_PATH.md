@@ -334,8 +334,8 @@ Structured by interview round order — the thing tested first is built first.
 |---|---|---|
 | Skilljar Modules 1–5 | Modules 1-4 done; Module 5 Networking done 2026-05-19 | ✅ |
 | Skilljar Module 6 | Skipped 2026-05-29 — Maarek covers same content faster | ⏹️ |
-| Maarek Udemy course | Intensive week Jun 15-19 (1 hr Mon + 3 hrs/day Tue-Fri) — completing this week | 🟡 |
-| Tutorials Dojo Round 1 | Full timed exam, review every wrong answer (~3 hrs) — starts Jun 22 | ⏳ |
+| Maarek Udemy course | Intensive week Jun 15-19 (1 hr Mon + 3 hrs/day Tue-Fri) — completing Mon Jun 23 | 🟡 |
+| Tutorials Dojo Round 1 | Full timed exam, review every wrong answer (~3 hrs) — starts Jul 7 (Tue/Thu) | ⏳ |
 | Patch weak topics | Re-watch Maarek sections exposed by TD | ⏳ |
 | Tutorials Dojo Round 2 | Score 80%+ consistently → book real exam | ⏳ |
 
@@ -402,7 +402,7 @@ MWAA DAG:
 
 #### Build Phases
 
-**Phase 1 — Batch (Jul 19–28, fresh after AWS exam, Fri slot + weekend sessions):**
+**Phase 1 — Batch (Jun 23 – Jul 4, Tue/Thu slot freed from Maarek + Fri slot):**
 - S3 bucket: raw/, silver/, gold/ prefixes + lifecycle rules
 - Glue Crawler on raw S3 → Data Catalog table
 - Glue ETL job: clean + enrich + write Iceberg silver layer
@@ -418,6 +418,25 @@ MWAA DAG:
 - Python Kinesis producer: stream PaySim rows as JSON events
 - Lambda handler: schema validation + fraud_flag enrichment + Firehose delivery
 - End-to-end test: event → S3 within 60 seconds, Glue picks up within next hourly window
+
+#### Failure Scenarios (built into Phase 1 and 2 — deliberately break and recover each)
+
+| Service | Failure to inject | How to detect | How to recover (prod pattern) |
+|---|---|---|---|
+| **Glue ETL** | Schema mismatch: add new column to raw S3 file without updating script | Job fails with `AnalysisException` | Enable `mergeSchema` in Glue or add schema evolution handling; use `enableUpdateCatalog` flag |
+| **Glue ETL** | Job bookmark drift: reprocess already-seen files | Duplicate rows in silver layer | Reset job bookmark via console; add dedup step on unique key in ETL |
+| **Glue Crawler** | Partition not detected after new S3 prefix added | Athena/Redshift Spectrum returns no data | Run `MSCK REPAIR TABLE` or re-trigger crawler; automate with S3 event → Lambda → trigger crawler |
+| **Redshift COPY** | S3 IAM role missing `s3:GetObject` on new prefix | `COPY` hangs then fails with `S3ServiceException` | Check `STL_LOAD_ERRORS` table; fix IAM policy or bucket policy; re-run COPY with `MAXERROR` to surface all bad rows |
+| **Redshift COPY** | Data type mismatch (varchar too short) | Row-level error in `STL_LOAD_ERRORS` | Inspect error table: `SELECT * FROM STL_LOAD_ERRORS ORDER BY starttime DESC LIMIT 10`; widen column, COPY again |
+| **EMR Serverless** | Executor OOM on large shuffle (no salting) | Stage fails, Driver log: `GC overhead limit exceeded` | Increase executor memory config; add repartition before wide transformation; or salt the join key |
+| **EMR Serverless** | Spot interruption mid-job | Job fails unexpectedly | Enable checkpointing for Spark jobs; use On-Demand fallback in instance fleet config |
+| **Lambda** | Timeout on large Kinesis batch | CloudWatch shows `Task timed out` after 3s | Increase timeout + memory; reduce batch size in Kinesis event source mapping; add DLQ for failed batches |
+| **Lambda** | At-least-once delivery causes duplicates in S3 | Duplicate files in Firehose prefix | Make Lambda idempotent: hash event + check S3 object exists before writing; use Firehose deduplication window |
+| **Kinesis** | Shard iterator expired (consumer fell behind) | `ExpiredIteratorException` in Lambda logs | Scale shards (`UpdateShardCount`); tune Lambda batch size + parallelization factor; check `GetRecords.IteratorAgeMilliseconds` CloudWatch metric |
+| **MWAA / Airflow** | Glue job fails mid-DAG, downstream tasks run anyway | Wrong data in Redshift | Set `trigger_rule=TriggerRule.ALL_SUCCESS` on downstream tasks; add `GlueJobSensor` with failure callback |
+| **MWAA / Airflow** | Zombie task (task stuck in `running` state) | Scheduler heartbeat loss, task never completes | Kill via `airflow tasks clear`; set `task_instance_mutation_hook` timeout; configure `scheduler.zombie_task_threshold` |
+| **S3** | Object deleted mid-Glue ETL run | Glue fails with `NoSuchKey` | Enable S3 Versioning; add retry logic in ETL script; use Glue job bookmarks to reprocess from last checkpoint |
+| **Iceberg** | Concurrent write conflict (two Glue jobs writing same table) | `CommitFailedException` | Iceberg uses optimistic concurrency — conflicting writer retries automatically (up to `write.upsert.enabled`); avoid concurrent writes to same partition by serializing via MWAA task dependency |
 
 #### Cost Controls
 | Service | Cost estimate | Action |
@@ -473,7 +492,9 @@ MWAA DAG:
 | Window | Primary Focus | Slot |
 |---|---|---|
 | Jun 8 → Jul 18 | Spark Internals (2B) → Delta Lake (2C) → Streaming (2D) → DLT (2E) → Unity Catalog (2F) → Auto Loader (2G) → MLflow (2H) → Data Modeling (2J) + Tom Bailey Snowflake (2I) + AWS CCP | Mon/Wed/Fri + Tue/Thu |
-| Jul 18 → Aug 1 | Kafka (4A) + Databricks DEA cert starts + **AWS FinFlow Phase 1** (S3+Glue+EMR+Redshift+Iceberg, Fri+weekend slots) | Mon/Wed/Fri |
+| Jun 23 → Jul 4 | **AWS FinFlow Phase 1** (S3+Glue+EMR+Redshift+Iceberg + failure scenarios) — Tue/Thu freed from Maarek + Fri | Tue/Thu + Fri |
+| Jul 7 → Jul 18 | Tutorials Dojo Round 1 + patch weak topics + Round 2 → book AWS CCP exam (Tue/Thu) | Tue/Thu |
+| Jul 18 → Aug 1 | Kafka (4A) + Databricks DEA cert starts | Mon/Wed/Fri |
 | Aug 1 → Aug 11 | Airflow (4B) + Fraud Detection DAG + **AWS FinFlow Phase 2** (MWAA orchestration, parallel to Airflow) | Mon/Wed/Fri + Tue/Thu |
 | Aug 11 → Aug 18 | Concurrency prep (P3) + CDC Pipeline + **AWS FinFlow Phase 3** (Kinesis+Lambda streaming) | Mon–Fri intensive |
 | Aug 18 → Aug 29 | Databricks Lakehouse + AI Monitor capstone build + DEA cert push | Mon/Wed/Fri + Tue/Thu |
