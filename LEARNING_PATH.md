@@ -41,6 +41,7 @@ Structured by interview round order — the thing tested first is built first.
 | Two Pointers | Valid Palindrome, Two Sum II, 3Sum, Container With Most Water, Trapping Rain Water (~5) | Jul 1 → Jul 14 | ⏳ |
 | Sliding Window | Best Time to Buy/Sell, Longest Substring Without Repeating, Longest Repeating Char, Permutation in String (~4) | Jul 14 → Jul 28 | ⏳ |
 | Trees BFS/DFS ← Databricks CodeSignal | Level Order Traversal, Max Depth, Same Tree, Invert Tree, Validate BST, Right Side View (~6) | Jul 28 → Aug 11 | ⏳ |
+| **Python OOP Basics** ← prerequisite for LRU Cache + Concurrency | 1 session (~45 min): `class`, `__init__`, instance vs class methods, `@property`, dunder methods (`__len__`, `__repr__`), inheritance basics — write a `Node` class and a `LinkedList` class from blank | Aug 4–8 (Fri slot, before Concurrency) | ⏳ |
 | Linked Lists ← Databricks CodeSignal | Reverse LL, Merge Two Sorted, Palindrome LL, LRU Cache (~4) | Aug 11 → Aug 25 | ⏳ |
 | Binary Search ← Databricks CodeSignal | Capacity to Ship Packages, Find Min in Rotated, Search in Rotated (~3) | Aug 25 → Sep 1 | ⏳ |
 
