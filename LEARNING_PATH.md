@@ -396,11 +396,11 @@ Synthea generator → FHIR R4 JSON bundles (PHI: names, DOBs, SSNs, diagnoses, m
 
 **Streaming path:**
 ```
-Python producer (replays PaySim CSV at ~1K events/sec as JSON)
+Python producer (replays Synthea encounter events at ~1K events/sec as FHIR JSON)
   → Kinesis Data Streams
-  → Lambda (validate schema, add fraud_flag via threshold rule, enrich with category)
-  → Kinesis Firehose → S3 (streaming prefix, hourly partitions)
-  → Glue ETL incremental job picks up new S3 partitions
+  → Lambda (validate schema, check required FHIR fields, add risk_flag via threshold rule)
+  → Kinesis Firehose → S3 (streaming prefix, hourly partitions, KMS encrypted)
+  → Glue ETL incremental job picks up new S3 partitions → appends to Iceberg silver
 ```
 
 **Orchestration:**
@@ -432,7 +432,7 @@ MWAA DAG:
 - Tear down MWAA environment after demo to stop hourly billing
 
 **Phase 3 — Streaming (Aug 11–18, parallel to CDC Pipeline):**
-- Python Kinesis producer: stream PaySim rows as JSON events
+- Python Kinesis producer: stream Synthea encounter events as FHIR JSON
 - Lambda handler: schema validation + fraud_flag enrichment + Firehose delivery
 - End-to-end test: event → S3 within 60 seconds, Glue picks up within next hourly window
 
@@ -473,7 +473,7 @@ MWAA DAG:
 ---
 
 ### Snowflake Mini-Project (embedded in 4C slot, Sep 1–14)
-*Same PaySim data. 3 sessions (Tue/Thu), no schedule extension needed.*
+*Same Synthea healthcare data (de-identified). 3 sessions (Tue/Thu), no schedule extension needed.*
 
 | Topic | Status |
 |---|---|
@@ -510,11 +510,11 @@ MWAA DAG:
 | Window | Primary Focus | Slot |
 |---|---|---|
 | Jun 8 → Jul 18 | Spark Internals (2B) → Delta Lake (2C) → Streaming (2D) → DLT (2E) → Unity Catalog (2F) → Auto Loader (2G) → MLflow (2H) → Data Modeling (2J) + Tom Bailey Snowflake (2I) + AWS CCP | Mon/Wed/Fri + Tue/Thu |
-| Jun 23 → Jul 4 | **AWS FinFlow Phase 1** (S3+Glue+EMR+Redshift+Iceberg + failure scenarios) — Tue/Thu freed from Maarek + Fri | Tue/Thu + Fri |
+| Jun 23 → Jul 4 | **AWS ClinicalFlow Phase 1** (S3+Glue+EMR+Redshift+Iceberg + failure scenarios) — Tue/Thu freed from Maarek + Fri | Tue/Thu + Fri |
 | Jul 7 → Jul 18 | Tutorials Dojo Round 1 + patch weak topics + Round 2 → book AWS CCP exam (Tue/Thu) | Tue/Thu |
 | Jul 18 → Aug 1 | Kafka (4A) + Databricks DEA cert starts | Mon/Wed/Fri |
-| Aug 1 → Aug 11 | Airflow (4B) + Fraud Detection DAG + **AWS FinFlow Phase 2** (MWAA orchestration, parallel to Airflow) | Mon/Wed/Fri + Tue/Thu |
-| Aug 11 → Aug 18 | Concurrency prep (P3) + CDC Pipeline + **AWS FinFlow Phase 3** (Kinesis+Lambda streaming) | Mon–Fri intensive |
+| Aug 1 → Aug 11 | Airflow (4B) + Fraud Detection DAG + **AWS ClinicalFlow Phase 2** (MWAA orchestration, parallel to Airflow) | Mon/Wed/Fri + Tue/Thu |
+| Aug 11 → Aug 18 | Concurrency prep (P3) + CDC Pipeline + **AWS ClinicalFlow Phase 3** (Kinesis+Lambda streaming) | Mon–Fri intensive |
 | Aug 18 → Aug 29 | Databricks Lakehouse + AI Monitor capstone build + DEA cert push | Mon/Wed/Fri + Tue/Thu |
 | Aug 29 → Sep 15 | SD out-loud mocks Phase C (2/week) + Behavioral stories | Flexible |
 | Sep 1 → Sep 14 | Snowflake crash course (4C) — runs Tue/Thu parallel to SD mocks | Tue/Thu |
