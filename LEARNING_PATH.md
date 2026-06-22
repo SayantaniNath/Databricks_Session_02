@@ -376,8 +376,10 @@ Structured by interview round order — the thing tested first is built first.
 **Batch path:**
 ```
 S3 (raw/bronze prefix)
+  → ydata-profiling: HTML profile report on raw PaySim data (distributions, nulls, outliers) — run once, informs pipeline design
   → Glue Crawler → Data Catalog (schema + partition registration)
   → Glue ETL job (PySpark, Glue 3.0): clean nulls, standardize categories, partition by payment_date
+  → Great Expectations: validate silver layer (row count, null %, amount range, transaction_type values) — suite runs as Glue step; fails job on critical expectation breach
   → S3 silver (Apache Iceberg format via Glue + Iceberg connector)  ← covers Hudi/Iceberg/Delta tri-fecta
   → Redshift COPY from S3 → fact_transactions, dim_customer, dim_merchant (gold layer)
   → EMR Serverless job: monthly_merchant_risk_score (heavy aggregation, runs once, terminates)
@@ -404,8 +406,10 @@ MWAA DAG:
 
 **Phase 1 — Batch (Jun 23 – Jul 4, Tue/Thu slot freed from Maarek + Fri slot):**
 - S3 bucket: raw/, silver/, gold/ prefixes + lifecycle rules
+- **ydata-profiling** (Session 1, ~30 min): `ProfileReport(df)` on raw PaySim CSV → save HTML to S3 → read distributions, null rates, correlations — informs what to clean in ETL
 - Glue Crawler on raw S3 → Data Catalog table
 - Glue ETL job: clean + enrich + write Iceberg silver layer
+- **Great Expectations** (Session 2, ~1 hr): create expectation suite on silver layer: `expect_column_values_to_not_be_null`, `expect_column_values_to_be_in_set` (transaction_type), `expect_column_mean_to_be_between` (amount) → run as Glue Python step → fails job if critical expectations breach → saves Data Docs HTML to S3
 - Redshift Serverless: COPY from S3, build dim/fact model (reuse FinFlow SQL)
 - EMR Serverless: monthly merchant risk aggregation (1 job, terminate after)
 
@@ -437,6 +441,7 @@ MWAA DAG:
 | **MWAA / Airflow** | Zombie task (task stuck in `running` state) | Scheduler heartbeat loss, task never completes | Kill via `airflow tasks clear`; set `task_instance_mutation_hook` timeout; configure `scheduler.zombie_task_threshold` |
 | **S3** | Object deleted mid-Glue ETL run | Glue fails with `NoSuchKey` | Enable S3 Versioning; add retry logic in ETL script; use Glue job bookmarks to reprocess from last checkpoint |
 | **Iceberg** | Concurrent write conflict (two Glue jobs writing same table) | `CommitFailedException` | Iceberg uses optimistic concurrency — conflicting writer retries automatically (up to `write.upsert.enabled`); avoid concurrent writes to same partition by serializing via MWAA task dependency |
+| **Great Expectations** | Expectation suite fails on new upstream data (schema drift adds new category) | GE raises `ValidationError`, Glue job exits non-zero | Update expectation suite: add new value to `expect_column_values_to_be_in_set`; add `expect_column_to_exist` checks to catch schema drift early; version suites in S3 alongside data |
 
 #### Cost Controls
 | Service | Cost estimate | Action |
