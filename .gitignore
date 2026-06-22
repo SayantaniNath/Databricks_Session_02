@@ -5,6 +5,5 @@
 *.png
 *.jpg
 *.zip
-finflow/
 interview_prep/logs/
 .DS_Store

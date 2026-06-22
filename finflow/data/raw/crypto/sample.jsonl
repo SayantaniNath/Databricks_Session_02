@@ -1,0 +1,6 @@
+{"coin": "bitcoin", "symbol": "btc", "price_usd": 67123.45, "fetched_at": "2026-05-15T10:00:00Z"}
+{"coin": "ethereum", "symbol": "eth", "price_usd": 3210.10, "fetched_at": "2026-05-15T10:00:00Z"}
+{"coin": "solana", "symbol": "sol", "price_usd": 148.77, "fetched_at": "2026-05-15T10:00:00Z"}
+{"coin": "bitcoin", "symbol": "btc", "price_usd": 67890.12, "fetched_at": "2026-05-16T10:00:00Z"}
+{"coin": "ethereum", "symbol": "eth", "price_usd": 3155.40, "fetched_at": "2026-05-16T10:00:00Z"}
+{"coin": "solana", "symbol": "sol", "price_usd": 151.20, "fetched_at": "2026-05-16T10:00:00Z"}

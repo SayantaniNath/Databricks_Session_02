@@ -1,0 +1,3 @@
+{"coin": "bitcoin", "full_name": "Bitcoin", "consensus": "PoW"}
+{"coin": "ethereum", "full_name": "Ethereum", "consensus": "PoS"}
+{"coin": "solana", "full_name": "Solana", "consensus": "PoS"}
