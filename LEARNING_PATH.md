@@ -262,6 +262,8 @@ Structured by interview round order — the thing tested first is built first.
 | Incremental models: is_incremental() macro, unique_key, merge vs append strategy | ⏳ |
 | Schema tests: not_null, unique, accepted_values, relationships | ⏳ |
 | Custom singular data tests | ⏳ |
+| **dbt-expectations** package: GE-style checks in dbt (`expect_column_values_to_not_be_null`, value ranges, regex) — install via packages.yml, run with `dbt test` | ⏳ |
+| **Elementary** package: data observability on dbt — anomaly detection (row counts, null %, freshness), schema change alerts, Elementary UI dashboard | ⏳ |
 | Snapshots: SCD Type 2 with dbt (timestamp strategy + check strategy) | ⏳ |
 | Seeds: loading CSV reference data | ⏳ |
 | Macros + Jinja templating | ⏳ |
