@@ -32,6 +32,17 @@ Structured by interview round order — the thing tested first is built first.
 | SCD Type 2 with Delta MERGE INTO syntax | ⏳ | Covered in Pillar 2C |
 | DataLemur — 2 problems/week (Tue/Thu 20 min) | 🟡 | Ongoing through Oct |
 
+### Python DE Foundations ← Jun 27–30 (rescheduled from Aug)
+*Topics 1–3: Jun 27 (Sat, ~1.5 hr) | Topics 4–5: Jun 30 (Mon, first 45 min of regular slot)*
+
+| Topic | Session | Status |
+|---|---|---|
+| Generators & iterators: yield, next(), iter(), generator expressions, lazy pipelines | Jun 27 (Sat) | ⏳ |
+| Memory-efficient patterns: chunked CSV reads, dtype downcasting, Parquet vs CSV trade-offs | Jun 27 (Sat) | ⏳ |
+| Pandas for DE: read_csv(chunksize=), memory_usage(), dtype optimization, groupby/agg/merge, apply vs vectorize | Jun 27 (Sat) | ⏳ |
+| Exception handling: try/except/finally/raise, custom exceptions, context managers (with statement) | Jun 30 (Mon) | ⏳ |
+| Functions deep-dive: *args/**kwargs, decorators (basic), lambda, map/filter | Jun 30 (Mon) | ⏳ |
+
 ### Python Algorithms — NeetCode 150 (expanded scope for Databricks)
 *Cadence: Mon/Wed, 25 min. Log: ~/Downloads/interview_prep/python_log.md*
 
@@ -106,7 +117,7 @@ Structured by interview round order — the thing tested first is built first.
 | Hands-on lab: build Delta table in CE, inspect _delta_log, watch checkpoint at v10 (walkthrough doc §23) | ✅ 2026-06-15 |
 
 ### 2D: Structured Streaming ⭐
-*Est. start: 2026-06-27 | Est. completion: 2026-07-07*
+*Est. start: 2026-06-30 (Mon, after Python DE Foundations wraps) | Est. completion: 2026-07-07*
 
 | Topic | Status |
 |---|---|
@@ -360,7 +371,7 @@ Structured by interview round order — the thing tested first is built first.
 | Project | Stack | Est. Build Window | Status |
 |---|---|---|---|
 | **FinFlow — learning sandbox** | PySpark + Pandas exercises (crypto JSONL data); not a portfolio project — skills it covers are superseded by ClinicalFlow + Databricks capstone | — | ⏹️ |
-| **AWS ClinicalFlow — Healthcare Data Lakehouse** ⭐ NEW | Synthea EHR (10yr, 100K patients) + S3 + Glue + EMR + Redshift + Lambda + Kinesis + MWAA + Iceberg + KMS + HIPAA/GDPR compliance layer | Phase 1: Jun 23–Jul 4 · Phase 2: Aug 1–11 · Phase 3: Aug 11–18 | ⏳ |
+| **AWS ClinicalFlow — Healthcare Data Lakehouse** ⭐ NEW | Synthea EHR (10yr, 64K patients) + S3 + Glue + EMR + Redshift + Lambda + Kinesis + MWAA + Iceberg + KMS + HIPAA/GDPR + **Anomaly Detection (IsolationForest on EMR)** | Phase 1: Jun 23–26 ✅ · Phase 2: Aug 1–11 · Phase 3: Aug 11–18 | 🟡 Phase 1 completing 2026-06-26 |
 | **Fraud Detection Pipeline** ⭐ | Kafka → Structured Streaming → IsolationForest → alert Kafka topic → Delta Lake → Airflow | Aug 1–11 | ⏳ |
 | **CDC Pipeline** | Debezium → Kafka → Delta (CDF enabled) + SCD Type 2 MERGE INTO | Aug 11–18 | ⏳ |
 | **Databricks Lakehouse + AI Monitor** ⭐ | Bronze/Silver/Gold + DLT + Unity Catalog + Airflow + Claude API anomaly detection | Aug 18–29 | ⏳ |
