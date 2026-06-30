@@ -118,3 +118,49 @@ df.to_parquet('transactions.parquet', index=False, compression='snappy')
 #
 # DE relevance: pd.read_csv(filepath, chunksize=N) returns a generator of
 # DataFrames — same lazy pattern as read_in_chunks above.
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Topic 3: Pandas for DE
+# Exercises practiced: 2026-06-30
+# ══════════════════════════════════════════════════════════════════════════════
+
+import numpy as np
+
+# ── Exercise 1 ── groupby + named aggregations ────────────────────────────────
+# Per region: total revenue, average units sold, number of products.
+
+df.groupby('region').agg(
+    total_revenue=('revenue', 'sum'),
+    avg_units_sold=('units_sold', 'mean'),
+    num_products=('product', 'count')
+)
+
+# Named agg syntax: result_col_name=('source_col', 'agg_function')
+# Column names cannot have spaces — use underscores.
+
+
+# ── Exercise 2 ── merge (LEFT JOIN) ───────────────────────────────────────────
+# Keep all orders even if customer is missing. Result: order_id, amount, name, country.
+
+result = orders.merge(customers, on='customer_id', how='left')[['order_id', 'amount', 'name', 'country']]
+
+# how='left' keeps all rows from orders; name/country = NaN where no match.
+# No .select() in pandas — that's PySpark. Column selection uses [[]] after merge.
+# df['col']  → Series (1D)
+# df[['col']] → DataFrame (2D) — use [[]] when selecting multiple columns.
+
+
+# ── Exercise 3 ── apply vs vectorized ────────────────────────────────────────
+# Part 1: replace apply with vectorized multiply
+df['discount'] = df['revenue'] * 0.15           # was: .apply(lambda x: x * 0.15)
+
+# Part 2: replace apply if/else with np.where
+df['tier'] = np.where(df['revenue'] > 10_000, 'high', 'low')
+# was: .apply(lambda x: 'high' if x > 10_000 else 'low')
+
+# Rule:
+# Math on a column          → df['col'] * value
+# if/else on one column     → np.where(condition, true_val, false_val)
+# Multiple conditions       → np.select([cond1, cond2], [val1, val2], default=...)
+# Truly complex multi-col   → apply (last resort — Python loop, 10-100x slower)
