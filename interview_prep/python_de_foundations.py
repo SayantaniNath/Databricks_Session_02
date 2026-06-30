@@ -57,6 +57,60 @@ for val in evens_up_to(10):
     print(val)  # 0 2 4 6 8
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Topic 2: Memory-Efficient Patterns
+# Exercises practiced: 2026-06-30
+# ══════════════════════════════════════════════════════════════════════════════
+
+import pandas as pd
+
+# ── Exercise 1 ── Chunked aggregation ─────────────────────────────────────────
+# Read 10M-row sales.csv in chunks of 50,000. Compute total revenue per country
+# across all chunks. Print top 3 countries by revenue.
+
+results = []
+for chunk in pd.read_csv('sales.csv', chunksize=50_000):
+    results.append(chunk.groupby('country')['revenue'].sum())
+
+top3 = pd.concat(results).groupby(level=0).sum().nlargest(3)
+print(top3)
+
+# Pattern: chunk → partial aggregate → collect → combine (same as MapReduce)
+# level=0 = group by index (country became the index after groupby+sum on Series)
+# Alternative: .sort_values(ascending=False).head(3)
+
+
+# ── Exercise 2 ── dtype downcast ──────────────────────────────────────────────
+# Downcast each column to the most memory-efficient dtype.
+# customer_id: int, max 99999 → int32 (int16 only holds to 32,767)
+# age: int, 0–120         → int8  (holds -128 to 127)
+# country: string, 50 unique values → category
+# score: float, 2 decimals → float32
+
+df = pd.read_csv('customers.csv')
+df['customer_id'] = df['customer_id'].astype('int32')
+df['age']         = df['age'].astype('int8')
+df['country']     = df['country'].astype('category')
+df['score']       = df['score'].astype('float32')
+print(df.memory_usage(deep=True).sum())
+
+# category dtype: stores integer codes + one lookup table instead of repeating
+# the full string per row — big savings for low-cardinality string columns.
+
+
+# ── Exercise 3 ── Parquet read/write ──────────────────────────────────────────
+# Read only 3 columns from a 200-column Parquet file (column pruning).
+# Save a DataFrame back to Parquet with Snappy compression.
+
+df = pd.read_parquet('transactions.parquet', columns=['user_id', 'amount', 'transaction_date'])
+df.to_parquet('transactions.parquet', index=False, compression='snappy')
+
+# Parquet reads only the needed columns off disk (columnar format).
+# CSV would read all 200 columns and discard 197.
+# In Spark, Parquet also enables predicate pushdown — filters hit storage
+# before data reaches the executor.
+
+
 # ── Key distinctions ───────────────────────────────────────────────────────────
 # Iterable  — has __iter__()  — can be looped (list, str, file)
 # Iterator  — has __next__() — stateful, one-directional
