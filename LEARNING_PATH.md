@@ -117,7 +117,7 @@ Structured by interview round order — the thing tested first is built first.
 | Hands-on lab: build Delta table in CE, inspect _delta_log, watch checkpoint at v10 (walkthrough doc §23) | ✅ 2026-06-15 |
 
 ### 2D: Structured Streaming ⭐
-*Est. start: 2026-06-30 (Mon, after Python DE Foundations wraps) | Est. completion: 2026-07-07*
+*Est. start: 2026-07-02 (Thu) | Est. completion: 2026-07-09*
 
 | Topic | Status |
 |---|---|
