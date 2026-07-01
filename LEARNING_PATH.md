@@ -1,5 +1,5 @@
 # DE Interview Prep — Full Learning Path
-**Sayantani Nath | Updated: 2026-06-19**
+**Sayantani Nath | Updated: 2026-07-01**
 **Goal:** Job-ready for FAANG / Databricks DE roles by Oct 1, 2026
 **Base:** Strong SQL, Python, Snowflake/Redshift production, AWS CCP in progress
 
@@ -48,13 +48,13 @@ Structured by interview round order — the thing tested first is built first.
 
 | Pattern | ~Problems | Est. Window | Status |
 |---|---|---|---|
-| Arrays & Hashing | Two Sum ✅ + Group Anagrams ✅ + Top K Frequent, Contains Duplicate, Valid Anagram, Product Except Self, Encode/Decode, Longest Consecutive (~8 total) | Jun 8 → Jun 30 | 🟡 |
-| Two Pointers | Valid Palindrome, Two Sum II, 3Sum, Container With Most Water, Trapping Rain Water (~5) | Jul 1 → Jul 14 | ⏳ |
-| Sliding Window | Best Time to Buy/Sell, Longest Substring Without Repeating, Longest Repeating Char, Permutation in String (~4) | Jul 14 → Jul 28 | ⏳ |
-| Trees BFS/DFS ← Databricks CodeSignal | Level Order Traversal, Max Depth, Same Tree, Invert Tree, Validate BST, Right Side View (~6) | Jul 28 → Aug 11 | ⏳ |
-| **Python OOP Basics** ← prerequisite for LRU Cache + Concurrency | 1 session (~45 min): `class`, `__init__`, instance vs class methods, `@property`, dunder methods (`__len__`, `__repr__`), inheritance basics — write a `Node` class and a `LinkedList` class from blank | Aug 4–8 (Fri slot, before Concurrency) | ⏳ |
-| Linked Lists ← Databricks CodeSignal | Reverse LL, Merge Two Sorted, Palindrome LL, LRU Cache (~4) | Aug 11 → Aug 25 | ⏳ |
-| Binary Search ← Databricks CodeSignal | Capacity to Ship Packages, Find Min in Rotated, Search in Rotated (~3) | Aug 25 → Sep 1 | ⏳ |
+| Arrays & Hashing | Two Sum ✅ + Group Anagrams ✅ + Top K Frequent, Contains Duplicate, Valid Anagram, Product Except Self, Encode/Decode, Longest Consecutive (~8 total) | Aug 1 → Aug 15 | 🟡 |
+| Two Pointers | Valid Palindrome, Two Sum II, 3Sum, Container With Most Water, Trapping Rain Water (~5) | Aug 15 → Sep 1 | ⏳ |
+| Sliding Window | Best Time to Buy/Sell, Longest Substring Without Repeating, Longest Repeating Char, Permutation in String (~4) | Sep 1 → Sep 8 | ⏳ |
+| Trees BFS/DFS ← Databricks CodeSignal | Level Order Traversal, Max Depth, Same Tree, Invert Tree, Validate BST, Right Side View (~6) | Sep 8 → Sep 15 | ⏳ |
+| **Python OOP Basics** ← prerequisite for LRU Cache + Concurrency | 1 session (~45 min): `class`, `__init__`, instance vs class methods, `@property`, dunder methods (`__len__`, `__repr__`), inheritance basics — write a `Node` class and a `LinkedList` class from blank | Sep 15 (Fri) | ⏳ |
+| Linked Lists ← Databricks CodeSignal | Reverse LL, Merge Two Sorted, Palindrome LL, LRU Cache (~4) | Sep 15 → Sep 22 | ⏳ |
+| Binary Search ← Databricks CodeSignal | Capacity to Ship Packages, Find Min in Rotated, Search in Rotated (~3) | Sep 22 → Oct 1 | ⏳ |
 
 ---
 
